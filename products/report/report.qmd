@@ -64,6 +64,9 @@ _Provide enough background on your topic that others can understand the why and 
 
 ## Description of data and data source
 _Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+BMI calculated using the following formula: weight (kg)/ (height (m))^2
+BMI categories assigned based BMI score and were as follows: under 18.5 was labeled underweight, between 18.5 and 24.9 was labeled as healthy, between 25 to 29.9 was labeled as overweight, and over 30 was labeled as obese.
+For data that did not meet the criteria due to errors was labeled as NA.
 
 ## Questions/Hypotheses to be addressed
 _State the research questions you plan to answer with this analysis._
