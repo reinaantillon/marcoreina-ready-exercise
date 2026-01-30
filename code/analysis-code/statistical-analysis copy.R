@@ -53,4 +53,20 @@ print(lmtable2)
 table_file2 = here("results", "tables", "resulttable2.rds")
 saveRDS(lmtable2, file = table_file2)
 
+############################
+#### Third model fit, fitted by MR
+# fit linear model using height as outcome, BMI and BMI_cat as predictor
+
+lmfit3 <- lm(Height ~ BMI + BMI_cat, mydata)  
+
+# place results from fit into a data frame with the tidy function
+lmtable3 <- broom::tidy(lmfit3)
+
+#look at fit results
+print(lmtable3)
+
+# save fit results table  
+table_file3 = here("results", "tables", "resulttable3.rds")
+saveRDS(lmtable3, file = table_file3)
+
   

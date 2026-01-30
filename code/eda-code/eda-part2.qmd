@@ -113,7 +113,8 @@ print(names(mydata))
 
 # Boxplot: Height by BMI category
 p_box <- ggplot(mydata, aes(x = BMI_cat, y = Height)) +
-  geom_boxplot()
+  geom_boxplot() +
+  ylim(100, NA)
 
 ggsave(
   filename = here::here("results", "figures", "boxplot_height_by_BMIcat.png"),
@@ -124,7 +125,8 @@ ggsave(
 
 # Scatterplot: Weight vs BMI
 p_scatter <- ggplot(mydata, aes(x = Weight, y = BMI)) +
-  geom_point()
+  geom_point() +
+  ylim(15, NA)
 
 ggsave(
   filename = here::here("results", "figures", "scatter_weight_vs_BMI.png"),

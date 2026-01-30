@@ -118,6 +118,7 @@ d5 <- d4 %>% dplyr::filter( !(BMI_cat %in% c("NA","N")) ) %>% droplevels()
 skimr::skim(d5)
 ```
 
+# turn BMI into a numeric value and round to 1 decimal
 
 ```{r}
 d6 <- d5 %>% dplyr::mutate(BMI = round(as.numeric(BMI), 1))

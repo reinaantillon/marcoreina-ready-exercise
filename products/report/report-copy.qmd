@@ -1,0 +1,185 @@
+---
+title: "Example Report Template for a Data Analysis Project"
+author: "Marco Reina and Alexandra Tejada-Strop"
+format:
+  html:
+    embed-resources: true 
+    toc: false
+    number-sections: true
+    highlight-style: github
+bibliography: ../../assets/dataanalysis-references.bib
+csl: ../../assets/american-journal-of-epidemiology.csl
+---
+
+```{r, echo=FALSE, message=FALSE}
+# load a few R packages
+library(here)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+```
+
+# Description of data and data source
+BMI calculated using the following formula: weight (kg)/ (height (m))^2
+BMI categories assigned based BMI score and were as follows: under 18.5 was labeled underweight, between 18.5 and 24.9 was labeled as healthy, between 25 to 29.9 was labeled as overweight, and over 30 was labeled as obese.
+For data that did not meet the criteria due to errors was labeled as NA.
+
+# Methods 
+A reproducible data analysis repository was created using a GitHub template provided by the professor. The raw dataset was modified by adding one new numerical variable and one new categorical variable. Collaborative analysis was conducted by granting a classmate direct access to the repository. The collaborator updated the data processing pipeline to use the updated dataset, which included the new variables. The collaborator performed necessary data cleaning and saved the new processed data. Exploratory data analysis was extended to include a boxplot by the new categorical variable (BMI_cat) and a scatterplot relating the new numerical variable (BMI score) to weight. Resulting figures were saved, committed and pushed to the shared repository.
+
+# Code analzying new variables
+
+```{r}
+
+# Load cleaned data
+data_location <- here::here("data","processed-data","processeddata2.rds")
+mydata <- readRDS(data_location)
+
+# Quick check
+print(names(mydata))
+
+# Boxplot: Height by BMI category
+p_box <- ggplot(mydata, aes(x = BMI_cat, y = Height)) +
+  geom_boxplot() +
+  ylim(100, NA)
+
+ggsave(
+  filename = here::here("results", "figures", "boxplot_height_by_BMIcat.png"),
+  plot = p_box,
+  width = 7,
+  height = 5
+)
+
+# Scatterplot: Weight vs BMI
+p_scatter <- ggplot(mydata, aes(x = Weight, y = BMI)) +
+  geom_point() +
+  ylim(15, NA)
+
+ggsave(
+  filename = here::here("results", "figures", "scatter_weight_vs_BMI.png"),
+  plot = p_scatter,
+  width = 7,
+  height = 5
+)
+
+```
+
+# Cleaning
+Raw data were screened for wrong, missing, and incorrectly formatted values. Observations with impossible or missing weight values were excluded. The resulting dataset contained only valid, consistently formatted observations suitable for downstream analysis.
+
+Code:
+```{r}
+
+data_location <- here::here("data","raw-data","exampledata2.xlsx")
+rawdata <- readxl::read_excel(data_location)
+
+codebook <- readxl::read_excel(data_location, sheet ="Codebook")
+print(codebook) 
+
+dplyr::glimpse(rawdata)
+summary(rawdata)
+head(rawdata)
+#skimr::skim(rawdata)
+
+d1 <- rawdata %>% dplyr::filter( Height != "sixty" ) %>% 
+                  dplyr::mutate(Height = as.numeric(Height))
+
+#skimr::skim(d1)
+hist(d1$Height)
+
+d2 <- d1 %>% dplyr::mutate( Height = replace(Height, Height=="6",round(6*30.48,0)) )
+#skimr::skim(d2)
+
+d3 <- d2 %>%  dplyr::filter(Weight != 7000) %>% tidyr::drop_na()
+#skimr::skim(d3)
+
+d3$Gender <- as.factor(d3$Gender)  
+#skimr::skim(d3)
+
+d4 <- d3 %>% dplyr::filter( !(Gender %in% c("NA","N")) ) %>% droplevels()
+#skimr::skim(d4)
+
+# one more cleaning step to remove NA from BMI_cat, by MR
+d5 <- d4 %>% dplyr::filter( !(BMI_cat %in% c("NA","N")) ) %>% droplevels()
+#skimr::skim(d5)
+
+# turn BMI into a numeric value and round to 1 decimal, by MR
+d6 <- d5 %>% dplyr::mutate(BMI = round(as.numeric(BMI), 1))
+#skimr::skim(d6)
+
+processeddata <- d6
+```
+
+# Statistical analysis
+Linear models were fitted  as follows:
+1. Height as outcome, weight as predictor
+2. Height as outcome, weight and gender as predictor
+3. Height as outcome, BMI and BMI_cat as predictor
+
+
+# Results
+
+Code:
+```{r}
+############################
+#### First model fit
+# fit linear model using height as outcome, weight as predictor
+
+lmfit1 <- lm(Height ~ Weight, mydata)  
+
+# place results from fit into a data frame with the tidy function
+lmtable1 <- broom::tidy(lmfit1)
+
+#look at fit results
+print(lmtable1)
+
+# save fit results table  
+table_file1 = here("results", "tables", "resulttable1.rds")
+saveRDS(lmtable1, file = table_file1)
+
+############################
+#### Second model fit
+# fit linear model using height as outcome, weight and gender as predictor
+
+lmfit2 <- lm(Height ~ Weight + Gender, mydata)  
+
+# place results from fit into a data frame with the tidy function
+lmtable2 <- broom::tidy(lmfit2)
+
+#look at fit results
+print(lmtable2)
+
+# save fit results table  
+table_file2 = here("results", "tables", "resulttable2.rds")
+saveRDS(lmtable2, file = table_file2)
+
+############################
+#### Third model fit, fitted by MR
+# fit linear model using height as outcome, weight and gender as predictor
+
+lmfit3 <- lm(Height ~ BMI + BMI_cat, mydata)  
+
+# place results from fit into a data frame with the tidy function
+lmtable3 <- broom::tidy(lmfit3)
+
+#look at fit results
+print(lmtable3)
+
+# save fit results table  
+table_file3 = here("results", "tables", "resulttable3.rds")
+saveRDS(lmtable3, file = table_file3)
+
+p_box
+
+p_scatter
+
+
+```
+
+
+
+
+
+
+
+
