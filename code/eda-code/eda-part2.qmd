@@ -21,41 +21,21 @@ Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can 
 # Setup
 
 ```{r}
-
-# Load cleaned data
-data_location <- here::here("data","processed-data","processeddata2.rds")
-mydata <- readRDS(data_location)
-
-# Quick check
-print(names(mydata))
-
-# Boxplot: Height by BMI category
-p_box <- ggplot(mydata, aes(x = BMI_cat, y = Height)) +
-  geom_boxplot()
-
-ggsave(
-  filename = here::here("results", "figures", "boxplot_height_by_BMIcat.png"),
-  plot = p_box,
-  width = 7,
-  height = 5
-)
-
-# Scatterplot: Weight vs BMI
-p_scatter <- ggplot(mydata, aes(x = Weight, y = BMI)) +
-  geom_point()
-
-ggsave(
-  filename = here::here("results", "figures", "scatter_weight_vs_BMI.png"),
-  plot = p_scatter,
-  width = 7,
-  height = 5
-)
-
+#load needed packages. make sure they are installed.
+library(here) #for data loading/saving
+library(dplyr)
+library(skimr)
+library(ggplot2)
 ```
 
+Load the data.
 
-
-
+```{r}
+#Path to data. Note the use of the here() package and not absolute paths
+data_location <- here::here("data","processed-data","processeddata2.rds")
+#load data
+mydata <- readRDS(data_location)
+```
 
 # Data exploration through tables
 
@@ -113,10 +93,44 @@ figure_file = here("results", "figures", "height-weight-stratified.png")
 ggsave(filename = figure_file, plot=p4) 
 ```
 
-
-
 # Notes
 
 For your own explorations, tables and figures can be "quick and dirty". As long as you can see what's going on, there is no need to polish them. That's in contrast to figures you'll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.
 
 
+# Setup
+
+# Code copied from Alex commit and modified by MR to plot new variables
+
+```{r}
+
+# Load cleaned data
+data_location <- here::here("data","processed-data","processeddata2.rds")
+mydata <- readRDS(data_location)
+
+# Quick check
+print(names(mydata))
+
+# Boxplot: Height by BMI category
+p_box <- ggplot(mydata, aes(x = BMI_cat, y = Height)) +
+  geom_boxplot()
+
+ggsave(
+  filename = here::here("results", "figures", "boxplot_height_by_BMIcat.png"),
+  plot = p_box,
+  width = 7,
+  height = 5
+)
+
+# Scatterplot: Weight vs BMI
+p_scatter <- ggplot(mydata, aes(x = Weight, y = BMI)) +
+  geom_point()
+
+ggsave(
+  filename = here::here("results", "figures", "scatter_weight_vs_BMI.png"),
+  plot = p_scatter,
+  width = 7,
+  height = 5
+)
+
+```
